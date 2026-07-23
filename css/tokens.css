@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap');
+
+:root{
+--ink-900:#16181d;--ink-800:#22252c;--ink-700:#33363e;--ink-600:#4a4d56;
+--warm-500:#75726a;--warm-400:#928e84;--warm-300:#b3ada0;--warm-200:#d6d0c2;--warm-100:#e9e4d6;
+--paper-50:#f7f4ee;--paper-0:#fffdf9;
+--indigo-900:#0f2038;--indigo-800:#15304f;--indigo-700:#1a3a5f;--indigo-600:#1f3a5f;--indigo-500:#2c5382;--indigo-100:#e4ebf2;--indigo-50:#eef2f7;
+--vermillion-600:#a53a0d;--vermillion-500:#c1440e;--vermillion-100:#f7ded2;--vermillion-50:#fbeee7;
+--border-subtle:rgba(22,24,29,0.12);--border-strong:rgba(22,24,29,0.24);
+--bg-page:var(--paper-50);--bg-surface:var(--paper-0);--bg-sunken:var(--warm-100);
+--text-primary:var(--ink-900);--text-secondary:var(--ink-600);--text-tertiary:var(--warm-500);--text-on-dark:var(--paper-50);--text-on-accent:var(--paper-0);
+--action-primary:var(--indigo-600);--action-primary-hover:var(--indigo-700);--action-primary-active:var(--indigo-800);
+--action-ghost-hover:var(--indigo-50);
+--accent:var(--vermillion-500);--accent-hover:var(--vermillion-600);--accent-surface:var(--vermillion-50);
+--link:var(--indigo-600);--link-hover:var(--vermillion-500);
+--focus-ring:var(--indigo-500);
+
+--font-display:'Shippori Mincho',serif;
+--font-body:'Noto Sans JP',-apple-system,sans-serif;
+--text-display-xl:64px;--text-display-lg:48px;--text-display-md:36px;--text-display-sm:28px;
+--text-body-lg:19px;--text-body-md:16px;--text-body-sm:14px;--text-caption:12px;--text-eyebrow:11px;
+--leading-display:1.25;--leading-body:1.6;--leading-tight:1.35;
+--tracking-eyebrow:0.14em;--tracking-tight:-0.01em;
+--weight-regular:400;--weight-medium:500;--weight-semibold:600;--weight-bold:700;
+
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;--space-12:48px;--space-16:64px;--space-24:96px;--space-32:128px;
+--content-max:1120px;--content-pad:24px;
+
+--radius-sm:4px;--radius-md:8px;--radius-lg:16px;--radius-pill:999px;
+--shadow-sm:0 1px 3px rgba(22,24,29,0.08),0 1px 2px rgba(22,24,29,0.06);
+--shadow-md:0 6px 16px rgba(22,24,29,0.12),0 2px 6px rgba(22,24,29,0.08);
+--shadow-focus:0 0 0 3px rgba(44,83,130,0.28);
+--ease-standard:cubic-bezier(0.4,0,0.2,1);
+--duration-fast:150ms;--duration-standard:220ms;--duration-slow:320ms;
+--scrim-dark:rgba(15,20,25,0.42);
+}
