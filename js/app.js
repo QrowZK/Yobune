@@ -38,7 +38,7 @@ const copy = {
     contact: {
       eyebrow: 'お問い合わせ', title: 'ご要望をお聞かせください。',
       desc: '1営業日以内にご返信します。マッチする場合は、1週間以内に簡単な提案書をお送りします。',
-      contactName: 'Samuel Kincer', phone: '+080-4007-7701', loc: '富山、日本 — リモートでどこでも対応',
+      contactName: '金佐　作夢', phone: '+080-4007-7701', loc: '富山、日本 — リモートでどこでも対応',
       name: '名前', namePh: 'お名前', email: 'メールアドレス', emailPh: 'you@company.com', service: 'サービス',
       opts: [{ label: 'ウェブデザイン', value: 'design' }, { label: '開発', value: 'dev' }, { label: '保守 & IT', value: 'maint' }],
       details: 'プロジェクト内容', detailsPh: '一言で構いません',
