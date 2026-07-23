@@ -38,7 +38,7 @@ const copy = {
     contact: {
       eyebrow: 'お問い合わせ', title: 'ご要望をお聞かせください。',
       desc: '1営業日以内にご返信します。マッチする場合は、1週間以内に簡単な提案書をお送りします。',
-      phone: '+81 76 000 0000', loc: '富山、日本 — リモートでどこでも対応',
+      contactName: '金佐　作夢', phone: '+080-4007-7701', loc: '富山、日本 — リモートでどこでも対応',
       name: '名前', namePh: 'お名前', email: 'メールアドレス', emailPh: 'you@company.com', service: 'サービス',
       opts: [{ label: 'ウェブデザイン', value: 'design' }, { label: '開発', value: 'dev' }, { label: '保守 & IT', value: 'maint' }],
       details: 'プロジェクト内容', detailsPh: '一言で構いません',
@@ -85,7 +85,7 @@ const copy = {
     contact: {
       eyebrow: 'Contact', title: 'Tell us what you need.',
       desc: "We reply within a day. If it's a fit, we'll send a short proposal within a week.",
-      phone: '+81 76 000 0000', loc: 'Toyama, Japan — working remotely with clients everywhere',
+      contactName: 'Samuel Kincer', phone: '+080-4007-7701', loc: 'Toyama, Japan — working remotely with clients everywhere',
       name: 'Name', namePh: 'Your name', email: 'Email', emailPh: 'you@company.com', service: 'Service',
       opts: [{ label: 'Web design', value: 'design' }, { label: 'Development', value: 'dev' }, { label: 'Maintenance & IT', value: 'maint' }],
       details: 'Project details', detailsPh: 'A sentence or two is fine',
@@ -132,7 +132,7 @@ function renderFooter() {
     <div class="footer-inner">
       <div class="footer-wordmark">夜船</div>
       <div class="footer-tag">${esc(t.footerTag)}</div>
-      <div class="footer-contact"><span>hello@yofune.co</span><span>・</span><span>${esc(t.footerLoc)}</span></div>
+      <div class="footer-contact"><span>info@yobune.net</span><span>・</span><span>${esc(t.footerLoc)}</span></div>
     </div>
   </div>`;
 }
@@ -234,7 +234,8 @@ function renderContact() {
         <div class="section-title" style="margin-bottom:20px">${esc(t.title)}</div>
         <p style="font-size:15px;color:var(--text-secondary);line-height:var(--leading-body);margin-bottom:32px;max-width:420px;">${esc(t.desc)}</p>
         <div class="contact-info">
-          <div>hello@yofune.co</div>
+          <div>${esc(t.contactName)}</div>
+          <div>info@yobune.net</div>
           <div>${esc(t.phone)}</div>
           <div class="muted">${esc(t.loc)}</div>
         </div>
