@@ -1,0 +1,34 @@
+# Caddy site config for yobune.net (夜船) on the web host → /etc/caddy/sites/yobune.caddy.
+# Not deployed by the workflow (server config changes are an admin step): copy it into place,
+# then `sudo caddy validate --config /etc/caddy/Caddyfile && sudo systemctl reload caddy`.
+# Reproduces DreamHost's behaviour (recorded 2026-11-09) except where marked ★.
+
+yobune.net {
+	root * /srv/www/yobune.net
+	encode zstd gzip
+	file_server {
+		hide .*
+	}
+
+	# DreamHost: HTML 10 minutes, everything else 30 days.
+	@html path / */ *.html
+	header @html Cache-Control "max-age=600"
+	@media not path / */ *.html *.js *.css
+	header @media Cache-Control "max-age=2592000"
+	# ★ Yobune has no build step stamping ?v= on its CSS/JS, so DreamHost's 30 days meant a
+	#   style change could take a month to reach returning visitors. 1 hour instead.
+	@code path *.js *.css
+	header @code Cache-Control "max-age=3600"
+
+	# Errors (404 …) are never cached: the rules above would otherwise give a 404 for a
+	# not-yet-deployed image 30 days in the browser. DreamHost sent no cache header on errors.
+	handle_errors {
+		header Cache-Control "no-store"
+		respond "{err.status_code} {err.status_text}"
+	}
+}
+
+# DreamHost served https://www.yobune.net as a second copy; ★ redirect to the apex instead.
+www.yobune.net {
+	redir https://yobune.net{uri} permanent
+}
