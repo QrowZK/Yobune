@@ -25,8 +25,6 @@ const copy = {
         { t: '保守', d: '公開後も私たちが運用します。更新、監視、サポート。' },
       ],
       workEyebrow: '実績', workTitle: '最近手がけたサイト', viewAll: 'すべての実績を見る',
-      quote: '「サイトを公開した日から、私たちはそのことを考えなくなりました。それが目的でした。」',
-      quoteBy: '— Kurabu Coffee, 大阪',
     },
     services: {
       eyebrow: 'サービス', title: 'デザイン。開発。運用。', cta: 'プロジェクトを始める',
@@ -79,8 +77,6 @@ const copy = {
         { t: 'Maintenance', d: 'We keep it running after launch. Updates, monitoring, support.' },
       ],
       workEyebrow: 'Our work', workTitle: 'A few recent sites.', viewAll: 'View all work',
-      quote: '"We stopped thinking about the website the day it launched. That was the point."',
-      quoteBy: '— Kurabu Coffee, Osaka',
     },
     services: {
       eyebrow: 'Services', title: 'Design. Build. Maintain.', cta: 'Start a project',
@@ -211,10 +207,6 @@ function renderHome() {
         </div>
         ${workCard}
       </div>
-    </section>
-    <section class="quote-block">
-      <blockquote class="quote">${esc(t.quote)}</blockquote>
-      <div class="quote-by">${esc(t.quoteBy)}</div>
     </section>`;
 }
 

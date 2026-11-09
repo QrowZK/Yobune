@@ -90,9 +90,6 @@ button{font:inherit;}
 .row-between{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:48px;gap:16px;flex-wrap:wrap;}
 
 
-.quote-block{max-width:var(--content-max);margin:0 auto;padding:96px 24px;text-align:center;}
-.quote-block .quote{font-family:var(--font-display);font-size:28px;color:var(--text-primary);max-width:640px;margin:0 auto;line-height:var(--leading-display);}
-.quote-block .quote-by{font-size:13px;color:var(--text-tertiary);margin-top:16px;}
 
 /* Services */
 .services-list{display:flex;flex-direction:column;gap:1px;background:var(--border-subtle);}
@@ -124,7 +121,7 @@ button{font:inherit;}
   .service-row{grid-template-columns:1fr;gap:20px;padding:32px 24px;}
   .contact-grid{grid-template-columns:1fr;gap:40px;padding:64px 24px;}
   .hero h1{font-size:40px;}
-  .section,.section-sunken,.quote-block{padding-top:64px;padding-bottom:64px;}
+  .section,.section-sunken{padding-top:64px;padding-bottom:64px;}
   .nav-links{gap:16px;}
 }
 @media (max-width:600px){
@@ -136,7 +133,6 @@ button{font:inherit;}
   .hero p{font-size:16px;}
   .hero-ctas .btn{width:100%;justify-content:center;}
   .section-title{font-size:26px;}
-  .quote-block .quote{font-size:22px;}
   .contact-panel{padding:24px 20px;}
   .contact-form .btn{align-self:stretch;justify-content:center;}
   .footer-inner{flex-direction:column;align-items:flex-start;}
