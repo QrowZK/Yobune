@@ -27,29 +27,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      # A missing key fails the run. It used to skip with a notice and go green, so three
+      # merges "deployed" without uploading anything and nobody could tell from the Actions tab.
       - name: Deploy key present?
-        id: key
         env:
           KEY: ${{ secrets.YOBUNE_DEPLOY_KEY }}
         run: |
           if [ -z "$KEY" ]; then
-            echo "::notice::YOBUNE_DEPLOY_KEY is not set; skipping the deploy."
-            echo "set=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "set=true" >> "$GITHUB_OUTPUT"
+            echo "::error::YOBUNE_DEPLOY_KEY is not set, so nothing was deployed. Set it with: gh secret set YOBUNE_DEPLOY_KEY -R QrowZK/Yobune < ~/.ssh/ci-deploy/yobune-ci"
+            exit 1
           fi
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        if: steps.key.outputs.set == 'true'
         with:
           persist-credentials: false
 
       - name: Sanity check
-        if: steps.key.outputs.set == 'true'
         run: test -s index.html
 
       - name: Mirror site files (rsync --delete)
-        if: steps.key.outputs.set == 'true'
         env:
           KEY: ${{ secrets.YOBUNE_DEPLOY_KEY }}
         run: |
@@ -65,7 +61,6 @@ jobs:
           rm -f ~/.ssh/yobune-ci
 
       - name: Check the live site
-        if: steps.key.outputs.set == 'true'
         run: |
           # Before DNS moves to the new host, yobune.net still answers from the old one; check the
           # new host directly by IP with the right Host name.
