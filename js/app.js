@@ -7,6 +7,11 @@ const copy = {
       { label: 'お問い合わせ', v: 'contact' },
     ],
     cta: 'プロジェクトを始める',
+    langLabel: '言語を切り替える',
+    meta: {
+      title: '夜船 — 富山のウェブデザイン & IT',
+      description: '夜船は富山のウェブデザイン・ITスタジオです。放っておいても大丈夫なウェブサイトを設計し、構築し、維持します。',
+    },
     footerTag: '夜船が制作し、夜船が運用しています。',
     footerLoc: '富山 / リモート',
     home: {
@@ -38,12 +43,14 @@ const copy = {
     contact: {
       eyebrow: 'お問い合わせ', title: 'ご要望をお聞かせください。',
       desc: '1営業日以内にご返信します。マッチする場合は、1週間以内に簡単な提案書をお送りします。',
-      contactName: '金佐　作夢', phone: '+080-4007-7701', loc: '富山、日本 — リモートでどこでも対応',
+      contactName: '金佐　作夢', phone: '080-4007-7701', loc: '富山、日本 — リモートでどこでも対応',
       name: '名前', namePh: 'お名前', email: 'メールアドレス', emailPh: 'you@company.com', service: 'サービス',
       opts: [{ label: 'ウェブデザイン', value: 'design' }, { label: '開発', value: 'dev' }, { label: '保守 & IT', value: 'maint' }],
       details: 'プロジェクト内容', detailsPh: '一言で構いません',
       updates: 'アップデートを時々お送りします。スパムはありません。', send: 'メッセージを送る',
-      sentTitle: '送信しました。', sentDesc: '1営業日以内にご連絡します。',
+      subject: '夜船へのお問い合わせ',
+      sentTitle: 'メールアプリが開きます。', sentDesc: 'メールが開かない場合は、info@yobune.net まで直接ご連絡ください。1営業日以内にご返信します。',
+      sentAgain: '別のメッセージを送る',
     },
   },
   en: {
@@ -54,6 +61,11 @@ const copy = {
       { label: 'Contact', v: 'contact' },
     ],
     cta: 'Start a project',
+    langLabel: 'Switch language',
+    meta: {
+      title: '夜船 — Web design & IT, Toyama',
+      description: '夜船 is a web design and IT studio in Toyama, Japan. We design, build, and maintain the web presence behind businesses that need it done right, and left alone.',
+    },
     footerTag: 'Built by 夜船. Maintained by 夜船.',
     footerLoc: 'Toyama / Remote',
     home: {
@@ -85,56 +97,80 @@ const copy = {
     contact: {
       eyebrow: 'Contact', title: 'Tell us what you need.',
       desc: "We reply within a day. If it's a fit, we'll send a short proposal within a week.",
-      contactName: 'Samuel Kincer', phone: '+080-4007-7701', loc: 'Toyama, Japan — working remotely with clients everywhere',
+      contactName: 'Samuel Kincer', phone: '080-4007-7701', loc: 'Toyama, Japan — working remotely with clients everywhere',
       name: 'Name', namePh: 'Your name', email: 'Email', emailPh: 'you@company.com', service: 'Service',
       opts: [{ label: 'Web design', value: 'design' }, { label: 'Development', value: 'dev' }, { label: 'Maintenance & IT', value: 'maint' }],
       details: 'Project details', detailsPh: 'A sentence or two is fine',
       updates: 'Send me occasional updates, no spam', send: 'Send message',
-      sentTitle: 'Message sent.', sentDesc: "We'll get back to you within a day.",
+      subject: 'Project enquiry for 夜船',
+      sentTitle: 'Your email app should open.', sentDesc: "If it didn't, email us directly at info@yobune.net. We'll get back to you within a day.",
+      sentAgain: 'Send another message',
     },
   },
 };
 
-const state = { screen: 'home', lang: 'ja' };
+const EMAIL = 'info@yobune.net';
+const PHONE_TEL = '+818040077701';
+const LANG_KEY = 'yobune-lang';
+const DEFAULT_SCREEN = 'home';
+
+function loadLang() {
+  try {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved && copy[saved]) return saved;
+  } catch (e) { /* storage unavailable */ }
+  return 'ja';
+}
+
+function saveLang(lang) {
+  try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* storage unavailable */ }
+}
+
+function screenFromHash() {
+  const h = location.hash.replace(/^#\/?/, '');
+  return screens[h] ? h : DEFAULT_SCREEN;
+}
+
+const state = { screen: DEFAULT_SCREEN, lang: loadLang() };
 const root = document.getElementById('root');
 
+const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 function esc(s) {
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
+  return String(s).replace(/[&<>"']/g, c => ESC[c]);
 }
 
 function renderNav() {
   const t = copy[state.lang];
-  const links = t.nav.map(l =>
-    `<button class="nav-link${state.screen === l.v ? ' active' : ''}" data-nav="${l.v}">${esc(l.label)}</button>`
-  ).join('');
+  const links = t.nav.map(l => {
+    const active = state.screen === l.v;
+    return `<a class="nav-link${active ? ' active' : ''}" href="#${l.v}"${active ? ' aria-current="page"' : ''}>${esc(l.label)}</a>`;
+  }).join('');
   return `
-  <div class="nav">
-    <div class="nav-inner">
-      <button class="wordmark" data-nav="home">夜船</button>
+  <header class="nav">
+    <nav class="nav-inner" aria-label="Main">
+      <a class="wordmark" href="#home" aria-label="夜船 — ${esc(t.nav[0].label)}">夜船</a>
       <div class="nav-links">
         ${links}
-        <button class="lang-toggle" data-lang-toggle>
-          <span class="${state.lang === 'ja' ? 'on' : ''}">日本語</span>
-          <span class="${state.lang === 'en' ? 'on' : ''}">EN</span>
+        <button type="button" class="lang-toggle" data-lang-toggle aria-label="${esc(t.langLabel)}">
+          <span class="${state.lang === 'ja' ? 'on' : ''}" lang="ja">日本語</span>
+          <span class="${state.lang === 'en' ? 'on' : ''}" lang="en">EN</span>
         </button>
-        <button class="btn btn-primary btn-sm" data-nav="contact">${esc(t.cta)}</button>
+        <a class="btn btn-primary btn-sm" href="#contact">${esc(t.cta)}</a>
       </div>
-    </div>
-  </div>`;
+    </nav>
+  </header>`;
 }
 
 function renderFooter() {
   const t = copy[state.lang];
   return `
-  <div class="footer">
+  <footer class="footer">
     <div class="footer-inner">
       <div class="footer-wordmark">夜船</div>
       <div class="footer-tag">${esc(t.footerTag)}</div>
-      <div class="footer-contact"><span>info@yobune.net</span><span>・</span><span>${esc(t.footerLoc)}</span></div>
+      <div class="footer-contact"><a href="mailto:${EMAIL}">${EMAIL}</a><span aria-hidden="true">・</span><span>${esc(t.footerLoc)}</span></div>
     </div>
-  </div>`;
+  </footer>`;
 }
 
 function renderHome() {
@@ -153,68 +189,68 @@ function renderHome() {
         <h1>${esc(t.h1)}</h1>
         <p>${esc(t.sub)}</p>
         <div class="hero-ctas">
-          <button class="btn btn-primary btn-lg" data-nav="contact">${esc(t.cta1)}</button>
-          <button class="btn btn-secondary btn-lg" data-nav="work">${esc(t.cta2)}</button>
+          <a class="btn btn-primary btn-lg" href="#contact">${esc(t.cta1)}</a>
+          <a class="btn btn-secondary btn-lg" href="#work">${esc(t.cta2)}</a>
         </div>
       </div>
     </div>
-    <div class="section">
-      <div class="section-title">${esc(t.whatTitle)}</div>
+    <section class="section">
+      <h2 class="section-title">${esc(t.whatTitle)}</h2>
       <div class="grid-3">
         ${t.services.map(s => `<div class="card"><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p></div>`).join('')}
       </div>
-    </div>
-    <div class="section-sunken">
+    </section>
+    <section class="section-sunken">
       <div class="section-sunken-inner">
         <div class="row-between">
           <div>
             <div class="eyebrow">${esc(t.workEyebrow)}</div>
-            <div class="section-title" style="margin-bottom:0">${esc(t.workTitle)}</div>
+            <h2 class="section-title tight">${esc(t.workTitle)}</h2>
           </div>
-          <button class="btn btn-ghost" data-nav="work">${esc(t.viewAll)}</button>
+          <a class="btn btn-ghost btn-md" href="#work">${esc(t.viewAll)}</a>
         </div>
         ${workCard}
       </div>
-    </div>
-    <div class="quote-block">
-      <div class="quote">${esc(t.quote)}</div>
+    </section>
+    <section class="quote-block">
+      <blockquote class="quote">${esc(t.quote)}</blockquote>
       <div class="quote-by">${esc(t.quoteBy)}</div>
-    </div>`;
+    </section>`;
 }
 
 function renderServices() {
   const t = copy[state.lang].services;
   return `
-    <div class="section">
+    <section class="section">
       <div class="eyebrow">${esc(t.eyebrow)}</div>
-      <div class="section-title">${esc(t.title)}</div>
+      <h2 class="section-title">${esc(t.title)}</h2>
       <div class="services-list">
         ${t.list.map(s => `
           <div class="service-row">
             <div>
               <span class="badge">${esc(s.badge)}</span>
-              <div class="service-title">${esc(s.t)}</div>
+              <h3 class="service-title">${esc(s.t)}</h3>
             </div>
             <div>
-              <div class="service-desc">${esc(s.d)}</div>
-              <div class="service-items">
-                ${s.items.map(it => `<div class="service-item"><span class="dot">・</span>${esc(it)}</div>`).join('')}
-              </div>
+              <p class="service-desc">${esc(s.d)}</p>
+              <ul class="service-items">
+                ${s.items.map(it => `<li class="service-item"><span class="dot" aria-hidden="true">・</span>${esc(it)}</li>`).join('')}
+              </ul>
             </div>
           </div>`).join('')}
       </div>
-      <div style="text-align:center;margin-top:64px;">
-        <button class="btn btn-primary btn-lg" data-nav="contact">${esc(t.cta)}</button>
+      <div class="section-cta">
+        <a class="btn btn-primary btn-lg" href="#contact">${esc(t.cta)}</a>
       </div>
-    </div>`;
+    </section>`;
 }
 
 function renderWork() {
   const t = copy[state.lang].work;
   return `
-    <div class="section">
+    <section class="section">
       <div class="eyebrow">${esc(t.eyebrow)}</div>
-      <div class="section-title">${esc(t.title)}</div>
+      <h2 class="section-title">${esc(t.title)}</h2>
       <div class="work-featured">
         <div class="card">
           <img src="assets/gakuenza-logo.svg" alt="Gakuenza logo" width="96" height="96" />
@@ -222,66 +258,113 @@ function renderWork() {
           <p>${esc(t.featuredDesc)}</p>
         </div>
       </div>
-    </div>`;
+    </section>`;
 }
 
 function renderContact() {
   const t = copy[state.lang].contact;
   return `
-    <div class="contact-grid">
+    <section class="contact-grid">
       <div>
         <div class="eyebrow">${esc(t.eyebrow)}</div>
-        <div class="section-title" style="margin-bottom:20px">${esc(t.title)}</div>
-        <p style="font-size:15px;color:var(--text-secondary);line-height:var(--leading-body);margin-bottom:32px;max-width:420px;">${esc(t.desc)}</p>
-        <div class="contact-info">
+        <h2 class="section-title mb-20">${esc(t.title)}</h2>
+        <p class="section-lead">${esc(t.desc)}</p>
+        <address class="contact-info" style="font-style:normal">
           <div>${esc(t.contactName)}</div>
-          <div>info@yobune.net</div>
-          <div>${esc(t.phone)}</div>
+          <div><a href="mailto:${EMAIL}">${EMAIL}</a></div>
+          <div><a href="tel:${PHONE_TEL}">${esc(t.phone)}</a></div>
           <div class="muted">${esc(t.loc)}</div>
-        </div>
+        </address>
       </div>
       <div class="contact-panel">
         <form class="contact-form" data-contact-form>
-          <label class="field"><span>${esc(t.name)}</span><input type="text" placeholder="${esc(t.namePh)}" required /></label>
-          <label class="field"><span>${esc(t.email)}</span><input type="email" placeholder="${esc(t.emailPh)}" required /></label>
+          <label class="field"><span>${esc(t.name)}</span><input type="text" name="name" autocomplete="name" placeholder="${esc(t.namePh)}" required /></label>
+          <label class="field"><span>${esc(t.email)}</span><input type="email" name="email" autocomplete="email" placeholder="${esc(t.emailPh)}" required /></label>
           <label class="field"><span>${esc(t.service)}</span>
-            <select>${t.opts.map(o => `<option value="${o.value}">${esc(o.label)}</option>`).join('')}</select>
+            <select name="service">${t.opts.map(o => `<option value="${esc(o.value)}">${esc(o.label)}</option>`).join('')}</select>
           </label>
-          <label class="field"><span>${esc(t.details)}</span><input type="text" placeholder="${esc(t.detailsPh)}" /></label>
-          <label class="checkbox"><input type="checkbox" checked />${esc(t.updates)}</label>
+          <label class="field"><span>${esc(t.details)}</span><input type="text" name="details" placeholder="${esc(t.detailsPh)}" /></label>
+          <label class="checkbox"><input type="checkbox" name="updates" />${esc(t.updates)}</label>
           <button type="submit" class="btn btn-primary btn-lg">${esc(t.send)}</button>
         </form>
-        <div class="sent" data-contact-sent hidden>
+        <div class="sent" data-contact-sent hidden role="status">
           <h3>${esc(t.sentTitle)}</h3>
           <p>${esc(t.sentDesc)}</p>
+          <p style="margin-top:16px"><button type="button" class="btn btn-secondary btn-md" data-contact-reset>${esc(t.sentAgain)}</button></p>
         </div>
       </div>
-    </div>`;
+    </section>`;
 }
 
 const screens = { home: renderHome, services: renderServices, work: renderWork, contact: renderContact };
 
-function render() {
-  root.innerHTML = renderNav() + screens[state.screen]() + renderFooter();
-  window.scrollTo(0, 0);
+function updateDocumentMeta() {
+  const t = copy[state.lang];
+  document.documentElement.lang = state.lang;
+  document.title = t.meta.title;
+  const desc = document.querySelector('meta[name="description"]');
+  if (desc) desc.setAttribute('content', t.meta.description);
+}
+
+function render({ scrollTop = true } = {}) {
+  const y = window.scrollY;
+  updateDocumentMeta();
+  root.innerHTML = renderNav() + `<main id="main">${screens[state.screen]()}</main>` + renderFooter();
   bind();
+  window.scrollTo(0, scrollTop ? 0 : y);
+}
+
+function buildMailto(form, t) {
+  const data = new FormData(form);
+  const serviceLabel = (t.opts.find(o => o.value === data.get('service')) || {}).label || '';
+  const lines = [
+    `${t.name}: ${data.get('name') || ''}`,
+    `${t.email}: ${data.get('email') || ''}`,
+    `${t.service}: ${serviceLabel}`,
+    `${t.details}: ${data.get('details') || ''}`,
+    `${t.updates}: ${data.get('updates') ? 'Yes' : 'No'}`,
+  ];
+  return `mailto:${EMAIL}?subject=${encodeURIComponent(t.subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
 }
 
 function bind() {
-  root.querySelectorAll('[data-nav]').forEach(el =>
-    el.addEventListener('click', () => { state.screen = el.dataset.nav; render(); })
-  );
   const langToggle = root.querySelector('[data-lang-toggle]');
   if (langToggle) langToggle.addEventListener('click', () => {
     state.lang = state.lang === 'ja' ? 'en' : 'ja';
-    render();
+    saveLang(state.lang);
+    render({ scrollTop: false });
   });
+
+  // Clicking a link to the screen we're already on doesn't fire hashchange;
+  // re-render so the page still scrolls to the top.
+  root.querySelectorAll('a[href^="#"]').forEach(a =>
+    a.addEventListener('click', () => {
+      if (a.getAttribute('href') === `#${state.screen}`) render();
+    })
+  );
+
   const form = root.querySelector('[data-contact-form]');
+  const sent = root.querySelector('[data-contact-sent]');
   if (form) form.addEventListener('submit', e => {
     e.preventDefault();
+    const t = copy[state.lang].contact;
+    window.location.href = buildMailto(form, t);
     form.hidden = true;
-    root.querySelector('[data-contact-sent]').hidden = false;
+    sent.hidden = false;
+  });
+  const reset = root.querySelector('[data-contact-reset]');
+  if (reset) reset.addEventListener('click', () => {
+    form.reset();
+    sent.hidden = true;
+    form.hidden = false;
+    form.querySelector('input').focus();
   });
 }
 
-render();
+function route() {
+  state.screen = screenFromHash();
+  render();
+}
+
+window.addEventListener('hashchange', route);
+route();
