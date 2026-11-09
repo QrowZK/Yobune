@@ -1,0 +1,74 @@
+# Deploy yobune.net: every push to main (or a manual run) mirrors the site files to the web host.
+#
+# The YOBUNE_DEPLOY_KEY is locked on the server to `rrsync -wo /srv/www/yobune.net`: it can only
+# write into that one folder (no shell, no reading, no other paths), so the target here is `./`.
+# Secret not set → the job says so and skips.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-yobune
+  cancel-in-progress: false
+
+env:
+  DEPLOY_HOST: 5.78.209.231
+  # Pinned: verified against the server's own host key (SHA256:vIqaHM/o3hDe9XtfXxTKa9IF3aTYVQsBxu6pWbDS1Uo).
+  DEPLOY_HOST_KEY: "5.78.209.231 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPf1GoUOHB2/KT+DmL7KCWl4mAPMaom9C9Rsd0T4qVIp"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Deploy key present?
+        id: key
+        env:
+          KEY: ${{ secrets.YOBUNE_DEPLOY_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::notice::YOBUNE_DEPLOY_KEY is not set; skipping the deploy."
+            echo "set=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "set=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        if: steps.key.outputs.set == 'true'
+        with:
+          persist-credentials: false
+
+      - name: Sanity check
+        if: steps.key.outputs.set == 'true'
+        run: test -s index.html
+
+      - name: Mirror site files (rsync --delete)
+        if: steps.key.outputs.set == 'true'
+        env:
+          KEY: ${{ secrets.YOBUNE_DEPLOY_KEY }}
+        run: |
+          install -d -m 0700 ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/yobune-ci && chmod 600 ~/.ssh/yobune-ci
+          printf '%s\n' "$DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
+          # Everything in the repo is the site, except repo plumbing and the server config.
+          rsync -rlptzc --delete --itemize-changes \
+            --exclude='.git/' --exclude='.github/' --exclude='deploy/' \
+            --exclude='.gitignore' --exclude='.gitattributes' --exclude='*.md' --exclude='LICENSE*' \
+            -e "ssh -i $HOME/.ssh/yobune-ci -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=20" \
+            ./ "yobune-deploy@$DEPLOY_HOST:./"
+          rm -f ~/.ssh/yobune-ci
+
+      - name: Check the live site
+        if: steps.key.outputs.set == 'true'
+        run: |
+          # Before DNS moves to the new host, yobune.net still answers from the old one; check the
+          # new host directly by IP with the right Host name.
+          code=$(curl -s -o /dev/null -w '%{http_code}' --resolve "yobune.net:443:$DEPLOY_HOST" https://yobune.net/ || true)
+          echo "https://yobune.net/ via $DEPLOY_HOST → $code"
+          [ "$code" = 200 ] || echo "::warning::new host answered $code (expected 200 once DNS points at it)"
