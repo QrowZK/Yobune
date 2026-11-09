@@ -35,8 +35,11 @@ const copy = {
       ],
     },
     work: {
-      eyebrow: '実績', title: '最初のプロジェクトに取りかかっています。',
-      featuredName: 'Gakuenza', featuredDesc: '夜船が制作を手がける最初のプロジェクト。',
+      eyebrow: '実績', title: '手がけているプロジェクト。',
+      projects: [
+        { name: 'Gakuenza', desc: '夜船が制作を手がける最初のプロジェクト。', logo: 'assets/gakuenza-logo.svg' },
+        { name: 'Koma 時間割', desc: '小学校・中学校の時間割を自動で作成するツール。', logo: 'assets/koma-logo.svg' },
+      ],
     },
     contact: {
       eyebrow: 'お問い合わせ', title: 'ご要望をお聞かせください。',
@@ -87,8 +90,11 @@ const copy = {
       ],
     },
     work: {
-      eyebrow: 'Our work', title: "We're working on our first project.",
-      featuredName: 'Gakuenza', featuredDesc: "夜船's first project as a studio.",
+      eyebrow: 'Our work', title: "What we're working on.",
+      projects: [
+        { name: 'Gakuenza', desc: "夜船's first project as a studio.", logo: 'assets/gakuenza-logo.svg' },
+        { name: 'Koma 時間割', desc: 'Automatic timetabling for Japanese elementary and junior high schools.', logo: 'assets/koma-logo.svg' },
+      ],
     },
     contact: {
       eyebrow: 'Contact', title: 'Tell us what you need.',
@@ -169,16 +175,21 @@ function renderFooter() {
   </footer>`;
 }
 
+function renderProjects() {
+  const cards = copy[state.lang].work.projects.map(p => `
+      <div class="card">
+        <img src="${p.logo}" alt="${esc(p.name)} logo" width="96" height="96" />
+        <h3>${esc(p.name)}</h3>
+        <p>${esc(p.desc)}</p>
+      </div>`).join('');
+  return `
+    <div class="work-featured">${cards}
+    </div>`;
+}
+
 function renderHome() {
   const t = copy[state.lang].home;
-  const workCard = `
-    <div class="work-featured">
-      <div class="card">
-        <img src="assets/gakuenza-logo.svg" alt="Gakuenza logo" width="96" height="96" />
-        <h3>${esc(copy[state.lang].work.featuredName)}</h3>
-        <p>${esc(copy[state.lang].work.featuredDesc)}</p>
-      </div>
-    </div>`;
+  const workCard = renderProjects();
   return `
     <div class="hero">
       <div class="hero-inner">
@@ -243,13 +254,7 @@ function renderWork() {
     <section class="section">
       <div class="eyebrow">${esc(t.eyebrow)}</div>
       <h2 class="section-title">${esc(t.title)}</h2>
-      <div class="work-featured">
-        <div class="card">
-          <img src="assets/gakuenza-logo.svg" alt="Gakuenza logo" width="96" height="96" />
-          <h3>${esc(t.featuredName)}</h3>
-          <p>${esc(t.featuredDesc)}</p>
-        </div>
-      </div>
+      ${renderProjects()}
     </section>`;
 }
 
