@@ -18,9 +18,11 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  DEPLOY_HOST: 5.78.209.231
-  # Pinned: verified against the server's own host key (SHA256:vIqaHM/o3hDe9XtfXxTKa9IF3aTYVQsBxu6pWbDS1Uo).
-  DEPLOY_HOST_KEY: "5.78.209.231 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPf1GoUOHB2/KT+DmL7KCWl4mAPMaom9C9Rsd0T4qVIp"
+  # hel1 (Helsinki), since the 2026-11 move off 5.78.209.231 (runbook §6, agentchat msg 1979).
+  DEPLOY_HOST: 95.217.186.178
+  # Pinned: verified against the server's own host key (SHA256:NqRfvIp5N2HnoiDe8LN2ocdNV8IMP3PP1ruG+u9K0uM),
+  # read from hel1's /etc/ssh and confirmed by vps, GakuenzaCore and PRCHECK (msgs 1977, 1974, 1987).
+  DEPLOY_HOST_KEY: "95.217.186.178 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIExZUPGyq2ZlQyTMTWOEnWkv9WygrK6gKmKt2J6jJ1t3"
 
 jobs:
   deploy:
